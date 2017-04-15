@@ -1,5 +1,9 @@
+import enemies.EnemyController;
+import enemies.HorizontalMoveBehavior;
+import enemies.MoveBehavior;
+import utils.Utils;
+
 import javax.imageio.ImageIO;
-import javax.rmi.CORBA.Util;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -27,7 +31,8 @@ public class GameWindow extends Frame {
     boolean isSpacePressed;
 
     ArrayList<Bullet> playerBullets;
-    Player player;
+    PlayerController playerController;
+    ArrayList<EnemyController> enemyControllers;
 
     //2 Draw
     public GameWindow() {
@@ -35,9 +40,22 @@ public class GameWindow extends Frame {
 
         playerBullets = new ArrayList<>();
 
-        player = new Player(200 - 17, 500 - 25, Utils.loadImage("res/plane3.png"));
+        playerController = new PlayerController(200 - 17, 500 - 25, Utils.loadImage("res/plane3.png"));
 
-        player.setPlayerBullets(playerBullets);
+        playerController.setPlayerBullets(playerBullets);
+
+        enemyControllers = new ArrayList<>();
+
+        for(int x = 0; x < 600; x += 100) {
+            EnemyController enemyController =
+                    new EnemyController(x, 0, Utils.loadImage("res/enemy-green-3.png"));
+            enemyControllers.add(enemyController);
+            if(x < 200) {
+                enemyController.setMoveBehavior(new MoveBehavior());
+            } else {
+                enemyController.setMoveBehavior(new HorizontalMoveBehavior());
+            }
+        }
 
         setTitle("1945");
 
@@ -150,7 +168,7 @@ public class GameWindow extends Frame {
                         e.printStackTrace();
                     }
 
-                    player.processInput(isUpPressed, isDownPressed, isLeftPressed, isRightPressed, isSpacePressed);
+                    playerController.processInput(isUpPressed, isDownPressed, isLeftPressed, isRightPressed, isSpacePressed);
 
                     if(isSpacePressed) {
 
@@ -160,7 +178,11 @@ public class GameWindow extends Frame {
                         bullet.update();
                     }
 
-                    player.update();
+                    playerController.update();
+
+                    for(EnemyController enemyController : enemyControllers) {
+                        enemyController.update();
+                    }
 
                     // Draw
                     repaint();
@@ -178,10 +200,14 @@ public class GameWindow extends Frame {
         // Draw on backbuffer
         backbufferGraphics.drawImage(backgroundImage, 0, 0, 400, 500, null);
 
-        player.draw(backbufferGraphics);
+        playerController.draw(backbufferGraphics);
 
         for (Bullet bullet : playerBullets) {
             bullet.draw(backbufferGraphics);
+        }
+
+        for(EnemyController enemyController : enemyControllers) {
+            enemyController.draw(backbufferGraphics);
         }
 
         // Draw backbuffer on game window

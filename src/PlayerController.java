@@ -1,4 +1,6 @@
 import models.GameRect;
+import utils.Utils;
+import views.ImageRenderer;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -6,20 +8,20 @@ import java.util.ArrayList;
 /**
  * Created by huynq on 4/12/17.
  */
-public class Player {
-
+public class PlayerController {
     private GameRect gameRect;
 
-    private Image image;
+    private ImageRenderer imageRenderer;
 
     private boolean shootDisabled;
+    private int dx;
+    private int dy;
 
     private ArrayList<Bullet> playerBullets;
-    int cooldownTime;
+    private int cooldownTime;
 
-    public Player(int x, int y, Image image) {
-        this.image = image;
-
+    public PlayerController(int x, int y, Image image) {
+        imageRenderer = new ImageRenderer(image);
         gameRect = new GameRect(x, y, 70, 50);
     }
 
@@ -27,20 +29,15 @@ public class Player {
         return gameRect;
     }
 
-    public Image getImage() {
-        return image;
-    }
-
     public void setPlayerBullets(ArrayList<Bullet> playerBullets) {
         this.playerBullets = playerBullets;
     }
 
     public void draw(Graphics graphics) {
-        graphics.drawImage(image, gameRect.getX(), gameRect.getY(), null);
+        imageRenderer.render(graphics, gameRect);
     }
 
-    int dx;
-    int dy;
+
 
     public void processInput(boolean isUpPressed,
                              boolean isDownPressed,
@@ -74,7 +71,6 @@ public class Player {
     }
 
 
-
     public void update() {
 
         gameRect.move(dx, dy);
@@ -82,7 +78,7 @@ public class Player {
         if(shootDisabled) {
             // cooling down
             cooldownTime++;
-            if (cooldownTime > 20) {
+            if (cooldownTime > 10) {
                 shootDisabled = false;
                 cooldownTime = 0;
             }
