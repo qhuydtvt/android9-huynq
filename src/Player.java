@@ -1,3 +1,5 @@
+import models.GameRect;
+
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -5,33 +7,24 @@ import java.util.ArrayList;
  * Created by huynq on 4/12/17.
  */
 public class Player {
-    private int x;
-    private int y;
-    private Image image;
 
-    private int dx;
-    private int dy;
+    private GameRect gameRect;
+
+    private Image image;
 
     private boolean shootDisabled;
 
     private ArrayList<Bullet> playerBullets;
     int cooldownTime;
 
-
     public Player(int x, int y, Image image) {
-        this.x = x;
-        this.y = y;
         this.image = image;
-        this.dx = 0;
-        this.dy = 0;
+
+        gameRect = new GameRect(x, y, 70, 50);
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
+    public GameRect getGameRect() {
+        return gameRect;
     }
 
     public Image getImage() {
@@ -43,8 +36,11 @@ public class Player {
     }
 
     public void draw(Graphics graphics) {
-        graphics.drawImage(image, x, y, null);
+        graphics.drawImage(image, gameRect.getX(), gameRect.getY(), null);
     }
+
+    int dx;
+    int dy;
 
     public void processInput(boolean isUpPressed,
                              boolean isDownPressed,
@@ -72,7 +68,7 @@ public class Player {
 
         if(isSpacePressed && !shootDisabled) {
             shootDisabled = true;
-            Bullet bullet = new Bullet(x + 35, y, Utils.loadImage("res/bullet.png"));
+            Bullet bullet = new Bullet(gameRect.getX() + 35, gameRect.getY(), Utils.loadImage("res/bullet.png"));
             playerBullets.add(bullet);
         }
     }
@@ -80,8 +76,8 @@ public class Player {
 
 
     public void update() {
-        this.x += dx;
-        this.y += dy;
+
+        gameRect.move(dx, dy);
 
         if(shootDisabled) {
             // cooling down
