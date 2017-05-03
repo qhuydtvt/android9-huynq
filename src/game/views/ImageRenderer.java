@@ -1,7 +1,7 @@
-package views;
+package game.views;
 
-import models.GameRect;
-import utils.Utils;
+import game.models.GameRect;
+import game.utils.Utils;
 
 import java.awt.*;
 

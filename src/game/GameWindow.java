@@ -1,7 +1,11 @@
-import enemies.EnemyController;
-import enemies.HorizontalMoveBehavior;
-import enemies.MoveBehavior;
-import utils.Utils;
+package game;
+
+import game.controllers.CollisionManager;
+import game.enemies.EnemyController;
+import game.enemies.HorzMoveBehavior;
+import game.enemies.MoveBehavior;
+import game.models.GameRect;
+import game.utils.Utils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -13,6 +17,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by huynq on 4/8/17.
@@ -30,36 +35,36 @@ public class GameWindow extends Frame {
     boolean isRightPressed;
     boolean isSpacePressed;
 
-    ArrayList<Bullet> playerBullets;
-    PlayerController playerController;
+    ArrayList<BulletController> playerBulletControllers;
     ArrayList<EnemyController> enemyControllers;
+
+    PlayerController playerController;
 
     //2 Draw
     public GameWindow() {
         setVisible(true);
 
-        playerBullets = new ArrayList<>();
+        playerBulletControllers = new ArrayList<>();
 
         playerController = new PlayerController(200 - 17, 500 - 25, Utils.loadImage("res/plane3.png"));
 
-        playerController.setPlayerBullets(playerBullets);
+        playerController.setPlayerBulletControllers(playerBulletControllers);
+
 
         enemyControllers = new ArrayList<>();
-
-        for(int x = 0; x < 600; x += 100) {
-            EnemyController enemyController =
-                    new EnemyController(x, 0, Utils.loadImage("res/enemy-green-3.png"));
-            enemyControllers.add(enemyController);
-            if(x < 200) {
-                enemyController.setMoveBehavior(new MoveBehavior());
-            } else {
-                enemyController.setMoveBehavior(new HorizontalMoveBehavior());
-            }
-        }
 
         setTitle("1945");
 
         setSize(400, 500);
+
+        for (int x = 0; x < getWidth(); x += 100) {
+            EnemyController enemyController = new EnemyController(x, 0, Utils.loadImage("res/enemy-green-3.png"));
+            if(x < 300)
+                enemyController.setMoveBehavior(new HorzMoveBehavior());
+            else
+                enemyController.setMoveBehavior(new MoveBehavior());
+            enemyControllers.add(enemyController);
+        }
 
         backBufferImage = new BufferedImage(400, 500, BufferedImage.TYPE_INT_ARGB);
         backbufferGraphics = backBufferImage.getGraphics();
@@ -174,7 +179,7 @@ public class GameWindow extends Frame {
 
                     }
 
-                    for (Bullet bullet : playerBullets) {
+                    for (BulletController bullet : playerBulletControllers) {
                         bullet.update();
                     }
 
@@ -183,6 +188,8 @@ public class GameWindow extends Frame {
                     for(EnemyController enemyController : enemyControllers) {
                         enemyController.update();
                     }
+
+                    CollisionManager.instance.update();
 
                     // Draw
                     repaint();
@@ -193,21 +200,28 @@ public class GameWindow extends Frame {
         thread.start();
     }
 
-
-
     @Override
     public void update(Graphics g) {
+
         // Draw on backbuffer
         backbufferGraphics.drawImage(backgroundImage, 0, 0, 400, 500, null);
 
         playerController.draw(backbufferGraphics);
 
-        for (Bullet bullet : playerBullets) {
-            bullet.draw(backbufferGraphics);
+        for (BulletController bulletController : playerBulletControllers) {
+            bulletController.draw(backbufferGraphics);
         }
 
-        for(EnemyController enemyController : enemyControllers) {
+        for (EnemyController enemyController: enemyControllers) {
             enemyController.draw(backbufferGraphics);
+        }
+
+        Iterator<EnemyController> enemyIterator = enemyControllers.iterator();
+        while(enemyIterator.hasNext()) {
+            EnemyController enemyController = enemyIterator.next();
+            if(enemyController.getGameRect().isDead()) {
+                enemyIterator.remove();
+            }
         }
 
         // Draw backbuffer on game window
