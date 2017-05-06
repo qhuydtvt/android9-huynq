@@ -8,6 +8,7 @@ import game.enemies.MoveBehavior;
 import game.utils.Utils;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -30,6 +31,8 @@ public class Level1Scene implements GameScene {
 
     public Level1Scene() {
         playerController = new PlayerController(200 - 17, 500 - 25, Utils.loadImage("res/plane3.png"));
+
+
 
         for (int x = 0; x < 600; x += 100) {
             EnemyController enemyController = new EnemyController(x, 0, Utils.loadImage("res/enemy-green-3.png"));

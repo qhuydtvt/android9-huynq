@@ -59,6 +59,7 @@ public class PlayerController {
 
         if(isSpacePressed && !shootDisabled) {
             shootDisabled = true;
+            Utils.playSound("res/player_shoot.wav", false);
             BulletController bulletController = new BulletController(gameRect.getX() + 35, gameRect.getY(), Utils.loadImage("res/bullet.png"));
             ControllerManager.instance.add(bulletController);
         }
