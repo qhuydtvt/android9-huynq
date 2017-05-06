@@ -1,7 +1,5 @@
 package game.controllers;
 
-import game.Collider;
-import game.GameWindow;
 import game.models.GameRect;
 
 import java.util.ArrayList;

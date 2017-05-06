@@ -1,4 +1,4 @@
-package game;
+package game.controllers;
 
 /**
  * Created by huynq on 4/12/17.

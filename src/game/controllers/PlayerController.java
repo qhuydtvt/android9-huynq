@@ -1,11 +1,10 @@
-package game;
+package game.controllers;
 
 import game.models.GameRect;
 import game.utils.Utils;
 import game.views.ImageRenderer;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 /**
  * Created by huynq on 4/12/17.
@@ -19,8 +18,6 @@ public class PlayerController {
     private int dx;
     private int dy;
 
-    private ArrayList<BulletController> playerBulletControllers;
-
     private int cooldownTime;
 
     public PlayerController(int x, int y, Image image) {
@@ -32,14 +29,9 @@ public class PlayerController {
         return gameRect;
     }
 
-    public void setPlayerBulletControllers(ArrayList<BulletController> playerBulletControllers) {
-        this.playerBulletControllers = playerBulletControllers;
-    }
-
     public void draw(Graphics graphics) {
         imageRenderer.render(graphics, gameRect);
     }
-
 
     public void processInput(boolean isUpPressed,
                              boolean isDownPressed,
@@ -68,7 +60,7 @@ public class PlayerController {
         if(isSpacePressed && !shootDisabled) {
             shootDisabled = true;
             BulletController bulletController = new BulletController(gameRect.getX() + 35, gameRect.getY(), Utils.loadImage("res/bullet.png"));
-            playerBulletControllers.add(bulletController);
+            ControllerManager.instance.add(bulletController);
         }
     }
 

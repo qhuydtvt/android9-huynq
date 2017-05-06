@@ -1,7 +1,5 @@
-package game;
+package game.controllers;
 
-import game.controllers.CollisionManager;
-import game.controllers.Controller;
 import game.enemies.EnemyController;
 import game.models.GameRect;
 import game.views.ImageRenderer;
